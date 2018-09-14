@@ -16,6 +16,7 @@ public class iZooto {
     static Context appContext;
     private static String senderId, mEncryptionKey;
     private static int mIzooToAppId;
+    private static Builder mBuilder;
 
     public static void setSenderId(String senderId) {
         iZooto.senderId = senderId;
@@ -32,6 +33,7 @@ public class iZooto {
     private static void init(Builder builder) {
         final Context context = builder.mContext;
         appContext = context.getApplicationContext();
+        mBuilder = builder;
         builder.mContext = null;
         try {
             ApplicationInfo appInfo = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
@@ -117,6 +119,8 @@ public class iZooto {
             @Override
             void onSuccess(String response) {
                 super.onSuccess(response);
+                if (mBuilder != null && mBuilder.mTokenReceivedListener != null)
+                    mBuilder.mTokenReceivedListener.onTokenReceived(preferenceUtil.getStringData(AppConstant.FCM_DEVICE_TOKEN));
                 preferenceUtil.setBooleanData(AppConstant.IS_TOKEN_UPDATED, true);
             }
 
@@ -136,9 +140,15 @@ public class iZooto {
 
     public static class Builder {
         Context mContext;
+        private TokenReceivedListener mTokenReceivedListener;
 
         private Builder(Context context) {
             mContext = context;
+        }
+
+        public Builder setTokenReceivedListener(TokenReceivedListener listener) {
+            mTokenReceivedListener = listener;
+            return this;
         }
 
 
