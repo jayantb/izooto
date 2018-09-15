@@ -122,6 +122,7 @@ public class iZooto {
                 if (mBuilder != null && mBuilder.mTokenReceivedListener != null)
                     mBuilder.mTokenReceivedListener.onTokenReceived(preferenceUtil.getStringData(AppConstant.FCM_DEVICE_TOKEN));
                 preferenceUtil.setBooleanData(AppConstant.IS_TOKEN_UPDATED, true);
+                preferenceUtil.setLongData(AppConstant.DEVICE_REGISTRATION_TIMESTAMP,System.currentTimeMillis());
             }
 
             @Override
