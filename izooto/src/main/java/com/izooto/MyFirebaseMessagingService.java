@@ -73,23 +73,25 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.d(TAG, "Short lived task is done.");
         try {
             JSONObject payloadObj = new JSONObject(data.get("campaignDetails"));
-            payload = new Payload();
-            payload.setFetchURL(payloadObj.optString("fetchURL"));
-            payload.setKey(payloadObj.optString("key"));
-            payload.setId(payloadObj.optString("id"));
-            payload.setRid(payloadObj.optString("rid"));
-            payload.setLink(payloadObj.optString("link"));
-            payload.setTitle(payloadObj.optString("title"));
-            payload.setMessage(payloadObj.optString("message"));
-            payload.setIcon(payloadObj.optString("icon"));
-            payload.setReqInt(payloadObj.optInt("reqInt"));
-            payload.setTag(payloadObj.optString("tag"));
-            payload.setBanner(payloadObj.optString("banner"));
-            payload.setAct_num(payloadObj.optInt("act_num"));
-            payload.setAct1name(payloadObj.optString("act1name"));
-            payload.setAct1link(payloadObj.optString("act1link"));
-            payload.setAct2name(payloadObj.optString("act2name"));
-            payload.setAct2link(payloadObj.optString("act2link"));
+            if (payloadObj.optLong("created_on") > PreferenceUtil.getInstance(this).getLongValue(AppConstant.DEVICE_REGISTRATION_TIMESTAMP)) {
+                payload = new Payload();
+                payload.setFetchURL(payloadObj.optString("fetchURL"));
+                payload.setKey(payloadObj.optString("key"));
+                payload.setId(payloadObj.optString("id"));
+                payload.setRid(payloadObj.optString("rid"));
+                payload.setLink(payloadObj.optString("link"));
+                payload.setTitle(payloadObj.optString("title"));
+                payload.setMessage(payloadObj.optString("message"));
+                payload.setIcon(payloadObj.optString("icon"));
+                payload.setReqInt(payloadObj.optInt("reqInt"));
+                payload.setTag(payloadObj.optString("tag"));
+                payload.setBanner(payloadObj.optString("banner"));
+                payload.setAct_num(payloadObj.optInt("act_num"));
+                payload.setAct1name(payloadObj.optString("act1name"));
+                payload.setAct1link(payloadObj.optString("act1link"));
+                payload.setAct2name(payloadObj.optString("act2name"));
+                payload.setAct2link(payloadObj.optString("act2link"));
+            } else return;
         } catch (JSONException e) {
             e.printStackTrace();
         }

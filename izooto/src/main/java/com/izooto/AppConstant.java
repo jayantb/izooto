@@ -18,4 +18,5 @@ public interface AppConstant {
     String KEY_WEB_URL = "WEB_URL";
     String KEY_NOTIFICITON_ID = "keyNotificationId";
     String IS_TOKEN_UPDATED = "isTokenUpdated";
+    String DEVICE_REGISTRATION_TIMESTAMP = "deviceRegistrationTimeStamp";
 }
