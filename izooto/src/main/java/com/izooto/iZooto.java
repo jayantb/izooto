@@ -11,6 +11,9 @@ import com.google.firebase.FirebaseApp;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public class iZooto {
 
     static Context appContext;
@@ -63,6 +66,7 @@ public class iZooto {
                             super.onSuccess(response);
                             try {
                                 JSONObject jsonObject = new JSONObject(Util.decrypt(mEncryptionKey, response));
+                                Lg.i("jsonObject: ", jsonObject.toString());
                                 senderId = jsonObject.getString("senderId");
                                 String appId = jsonObject.getString("appId");
                                 String apiKey = jsonObject.getString("apiKey");
@@ -113,8 +117,14 @@ public class iZooto {
         final PreferenceUtil preferenceUtil = PreferenceUtil.getInstance(appContext);
         String appVersion = Util.getAppVersion();
         String api_url = "app.php?s=" + 2 + "&pid=" + mIzooToAppId + "&btype=" + 9 + "&dtype=" + 3 + "&tz=" + System.currentTimeMillis() + "&bver=" + appVersion +
-                "&os=" + 4 + "&allowed=" + 1 + "&bKey=" + preferenceUtil.getStringData(AppConstant.FCM_DEVICE_TOKEN) + "&osVersion=" + Build.VERSION.RELEASE
-                + "&deviceName=" + Util.getDeviceName();
+                "&os=" + 4 + "&allowed=" + 1 + "&bKey=" + preferenceUtil.getStringData(AppConstant.FCM_DEVICE_TOKEN);
+        try {
+            String deviceName = URLEncoder.encode(Util.getDeviceName(), "utf-8");
+            String osVersion = URLEncoder.encode(Build.VERSION.RELEASE, "utf-8");
+            api_url += "&osVersion=" + osVersion + "&deviceName=" + deviceName;
+        } catch (UnsupportedEncodingException e) {
+            Lg.e("error: ", "unsupported encoding exception");
+        }
         RestClient.get(api_url, new RestClient.ResponseHandler() {
             @Override
             void onSuccess(String response) {
