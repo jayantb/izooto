@@ -6,8 +6,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.google.firebase.FirebaseApp;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -92,7 +90,8 @@ public class iZooto {
     }
 
     public static void init(final Context context, String apiKey, String appId) {
-        FirebaseApp.initializeApp(appContext);
+
+        /*FirebaseApp.initializeApp(appContext);*/
         FCMTokenGenerator fcmTokenGenerator = new FCMTokenGenerator();
         fcmTokenGenerator.getToken(context, senderId, apiKey, appId, new TokenGenerator.TokenGenerationHandler() {
             @Override
@@ -117,7 +116,7 @@ public class iZooto {
         final PreferenceUtil preferenceUtil = PreferenceUtil.getInstance(appContext);
         String appVersion = Util.getAppVersion();
         String api_url = "app.php?s=" + 2 + "&pid=" + mIzooToAppId + "&btype=" + 9 + "&dtype=" + 3 + "&tz=" + System.currentTimeMillis() + "&bver=" + appVersion +
-                "&os=" + 4 + "&allowed=" + 1 + "&bKey=" + preferenceUtil.getStringData(AppConstant.FCM_DEVICE_TOKEN);
+                "&os=" + 4 + "&allowed=" + 1 + "&bKey=" + preferenceUtil.getStringData(AppConstant.FCM_DEVICE_TOKEN) + "&test=test";
         try {
             String deviceName = URLEncoder.encode(Util.getDeviceName(), "utf-8");
             String osVersion = URLEncoder.encode(Build.VERSION.RELEASE, "utf-8");
