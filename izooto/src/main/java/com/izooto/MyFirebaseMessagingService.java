@@ -95,11 +95,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+        if (iZooto.appContext == null)
+            iZooto.appContext = this;
         Handler mainHandler = new Handler(Looper.getMainLooper());
         Runnable myRunnable = new Runnable() {
             @Override
             public void run() {
+
                 iZooto.processNotificationReceived(payload);
             } // This is your code
         };
