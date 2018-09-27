@@ -1,6 +1,7 @@
 package com.app.izoototest;
 
 import android.app.Application;
+import android.widget.Toast;
 
 import com.izooto.Lg;
 import com.izooto.TokenReceivedListener;
@@ -16,6 +17,6 @@ public class AppController extends Application implements TokenReceivedListener 
 
     @Override
     public void onTokenReceived(String token) {
-        Lg.i(AppController.class.getName()+": ",token);
+        Toast.makeText(this, "token1: "+token, Toast.LENGTH_LONG).show();
     }
 }

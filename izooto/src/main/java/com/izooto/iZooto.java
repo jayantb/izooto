@@ -5,6 +5,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,12 +57,15 @@ public class iZooto {
                     RestClient.get(AppConstant.GOOGLE_JSON_URL + mIzooToAppId + ".js", new RestClient.ResponseHandler() {
                         @Override
                         void onFailure(int statusCode, String response, Throwable throwable) {
+
+                            Toast.makeText(appContext, "JS api fail: "+response, Toast.LENGTH_LONG).show();
                             super.onFailure(statusCode, response, throwable);
                         }
 
                         @Override
                         void onSuccess(String response) {
                             super.onSuccess(response);
+                            Toast.makeText(appContext, "JS api success", Toast.LENGTH_LONG).show();
                             try {
                                 JSONObject jsonObject = new JSONObject(Util.decrypt(mEncryptionKey, response));
                                 Lg.i("jsonObject: ", jsonObject.toString());
@@ -71,9 +75,12 @@ public class iZooto {
                                 if (senderId != null && !senderId.isEmpty()) {
                                     if (!PreferenceUtil.getInstance(context).getBoolean(AppConstant.IS_TOKEN_UPDATED))
                                         init(context, apiKey, appId);
-                                } else
+                                } else {
+                                    Toast.makeText(appContext, "Sender id not received: "+response, Toast.LENGTH_LONG).show();
                                     Lg.e(AppConstant.APP_NAME_TAG, appContext.getString(R.string.something_wrong_fcm_sender_id));
+                                }
                             } catch (JSONException e) {
+                                Toast.makeText(appContext, "JS api ex: "+response, Toast.LENGTH_LONG).show();
                                 e.printStackTrace();
                             }
                         }
@@ -89,7 +96,7 @@ public class iZooto {
         }
     }
 
-    public static void init(final Context context, String apiKey, String appId) {
+    private static void init(final Context context, String apiKey, String appId) {
 
         /*FirebaseApp.initializeApp(appContext);*/
         FCMTokenGenerator fcmTokenGenerator = new FCMTokenGenerator();
@@ -123,11 +130,14 @@ public class iZooto {
             api_url += "&osVersion=" + osVersion + "&deviceName=" + deviceName;
         } catch (UnsupportedEncodingException e) {
             Lg.e("error: ", "unsupported encoding exception");
+            Toast.makeText(appContext, "unsupported encoding exception", Toast.LENGTH_LONG).show();
         }
         RestClient.get(api_url, new RestClient.ResponseHandler() {
             @Override
             void onSuccess(String response) {
                 super.onSuccess(response);
+                Toast.makeText(appContext, "Device Token: "+preferenceUtil.getStringData(AppConstant.FCM_DEVICE_TOKEN),
+                        Toast.LENGTH_LONG).show();
                 if (mBuilder != null && mBuilder.mTokenReceivedListener != null)
                     mBuilder.mTokenReceivedListener.onTokenReceived(preferenceUtil.getStringData(AppConstant.FCM_DEVICE_TOKEN));
                 preferenceUtil.setBooleanData(AppConstant.IS_TOKEN_UPDATED, true);
@@ -136,8 +146,8 @@ public class iZooto {
 
             @Override
             void onFailure(int statusCode, String response, Throwable throwable) {
+                Toast.makeText(appContext, "Api fail: "+response, Toast.LENGTH_LONG).show();
                 super.onFailure(statusCode, response, throwable);
-
             }
         });
     }
