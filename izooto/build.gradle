@@ -9,7 +9,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -38,9 +38,9 @@ ext {
     artifact = 'notification-sdk' //This artifact name should be the same with library module name
     libraryDescription = 'A push notification service which integrates with your app seamlessly'
 
-    siteUrl = 'https://www.izooto.com/'
-    gitUrl = ''
-    libraryVersion = '1.0.0'
+    siteUrl = 'https://github.com/jayantb/izooto'
+    gitUrl = 'https://github.com/jayantb/izooto.git'
+    libraryVersion = '1.0.1'
 
     developerId = 'izooto'
     developerName = 'jayant'

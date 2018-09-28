@@ -6,10 +6,11 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.google.firebase.FirebaseApp;
-
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class iZooto {
 
@@ -55,6 +56,7 @@ public class iZooto {
                     RestClient.get(AppConstant.GOOGLE_JSON_URL + mIzooToAppId + ".js", new RestClient.ResponseHandler() {
                         @Override
                         void onFailure(int statusCode, String response, Throwable throwable) {
+
                             super.onFailure(statusCode, response, throwable);
                         }
 
@@ -63,14 +65,16 @@ public class iZooto {
                             super.onSuccess(response);
                             try {
                                 JSONObject jsonObject = new JSONObject(Util.decrypt(mEncryptionKey, response));
+                                Lg.i("jsonObject: ", jsonObject.toString());
                                 senderId = jsonObject.getString("senderId");
                                 String appId = jsonObject.getString("appId");
                                 String apiKey = jsonObject.getString("apiKey");
                                 if (senderId != null && !senderId.isEmpty()) {
                                     if (!PreferenceUtil.getInstance(context).getBoolean(AppConstant.IS_TOKEN_UPDATED))
                                         init(context, apiKey, appId);
-                                } else
+                                } else {
                                     Lg.e(AppConstant.APP_NAME_TAG, appContext.getString(R.string.something_wrong_fcm_sender_id));
+                                }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -87,8 +91,9 @@ public class iZooto {
         }
     }
 
-    public static void init(final Context context, String apiKey, String appId) {
-        FirebaseApp.initializeApp(appContext);
+    private static void init(final Context context, String apiKey, String appId) {
+
+        /*FirebaseApp.initializeApp(appContext);*/
         FCMTokenGenerator fcmTokenGenerator = new FCMTokenGenerator();
         fcmTokenGenerator.getToken(context, senderId, apiKey, appId, new TokenGenerator.TokenGenerationHandler() {
             @Override
@@ -113,8 +118,14 @@ public class iZooto {
         final PreferenceUtil preferenceUtil = PreferenceUtil.getInstance(appContext);
         String appVersion = Util.getAppVersion();
         String api_url = "app.php?s=" + 2 + "&pid=" + mIzooToAppId + "&btype=" + 9 + "&dtype=" + 3 + "&tz=" + System.currentTimeMillis() + "&bver=" + appVersion +
-                "&os=" + 4 + "&allowed=" + 1 + "&bKey=" + preferenceUtil.getStringData(AppConstant.FCM_DEVICE_TOKEN) + "&osVersion=" + Build.VERSION.RELEASE
-                + "&deviceName=" + Util.getDeviceName();
+                "&os=" + 4 + "&allowed=" + 1 + "&bKey=" + preferenceUtil.getStringData(AppConstant.FCM_DEVICE_TOKEN) + "&check=1.0";
+        try {
+            String deviceName = URLEncoder.encode(Util.getDeviceName(), "utf-8");
+            String osVersion = URLEncoder.encode(Build.VERSION.RELEASE, "utf-8");
+            api_url += "&osVersion=" + osVersion + "&deviceName=" + deviceName;
+        } catch (UnsupportedEncodingException e) {
+            Lg.e("error: ", "unsupported encoding exception");
+        }
         RestClient.get(api_url, new RestClient.ResponseHandler() {
             @Override
             void onSuccess(String response) {
@@ -128,7 +139,6 @@ public class iZooto {
             @Override
             void onFailure(int statusCode, String response, Throwable throwable) {
                 super.onFailure(statusCode, response, throwable);
-
             }
         });
     }
