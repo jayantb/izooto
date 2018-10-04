@@ -11,7 +11,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [
                 izooto_enc_key: 'b07dfa9d56fc64df',
-                izooto_app_id : "27179"
+                izooto_app_id : "29331"
         ]
     }
 

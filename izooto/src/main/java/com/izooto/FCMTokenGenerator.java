@@ -15,7 +15,6 @@ public class FCMTokenGenerator implements TokenGenerator {
     @Override
     public void getToken(final Context context, final String senderId, final String apiKey, final String appId, final TokenGenerationHandler callback) {
         new Thread(new Runnable() {
-
             @Override
             public void run() {
                 try {
@@ -41,9 +40,10 @@ public class FCMTokenGenerator implements TokenGenerator {
 
     }
 
-    private void initFireBaseApp(String senderId, String apiKey, String appId) {
+    private void initFireBaseApp(final String senderId, final String apiKey, final String appId) {
         if (firebaseApp != null)
             return;
+
         FirebaseOptions firebaseOptions =
                 new FirebaseOptions.Builder()
                         .setGcmSenderId(senderId)
@@ -53,4 +53,6 @@ public class FCMTokenGenerator implements TokenGenerator {
         firebaseApp = FirebaseApp.initializeApp(iZooto.appContext, firebaseOptions, "IZOOTO");
         Lg.d("firebase app name: ", firebaseApp.getName());
     }
+
+
 }

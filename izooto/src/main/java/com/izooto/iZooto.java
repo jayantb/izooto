@@ -5,6 +5,10 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+
+import com.google.firebase.FirebaseApp;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,7 +74,7 @@ public class iZooto {
                                 String appId = jsonObject.getString("appId");
                                 String apiKey = jsonObject.getString("apiKey");
                                 if (senderId != null && !senderId.isEmpty()) {
-                                    if (!PreferenceUtil.getInstance(context).getBoolean(AppConstant.IS_TOKEN_UPDATED))
+//                                    if (!PreferenceUtil.getInstance(context).getBoolean(AppConstant.IS_TOKEN_UPDATED))
                                         init(context, apiKey, appId);
                                 } else {
                                     Lg.e(AppConstant.APP_NAME_TAG, appContext.getString(R.string.something_wrong_fcm_sender_id));
@@ -92,8 +96,7 @@ public class iZooto {
     }
 
     private static void init(final Context context, String apiKey, String appId) {
-
-        /*FirebaseApp.initializeApp(appContext);*/
+        FirebaseApp firebaseApp = FirebaseApp.initializeApp(appContext);
         FCMTokenGenerator fcmTokenGenerator = new FCMTokenGenerator();
         fcmTokenGenerator.getToken(context, senderId, apiKey, appId, new TokenGenerator.TokenGenerationHandler() {
             @Override
@@ -130,10 +133,17 @@ public class iZooto {
             @Override
             void onSuccess(String response) {
                 super.onSuccess(response);
-                if (mBuilder != null && mBuilder.mTokenReceivedListener != null)
-                    mBuilder.mTokenReceivedListener.onTokenReceived(preferenceUtil.getStringData(AppConstant.FCM_DEVICE_TOKEN));
+                if (mBuilder != null && mBuilder.mTokenReceivedListener != null) {
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mBuilder.mTokenReceivedListener.onTokenReceived(preferenceUtil.getStringData(AppConstant.FCM_DEVICE_TOKEN));
+                        }
+                    });
+
+                }
                 preferenceUtil.setBooleanData(AppConstant.IS_TOKEN_UPDATED, true);
-                preferenceUtil.setLongData(AppConstant.DEVICE_REGISTRATION_TIMESTAMP,System.currentTimeMillis());
+                preferenceUtil.setLongData(AppConstant.DEVICE_REGISTRATION_TIMESTAMP, System.currentTimeMillis());
             }
 
             @Override
