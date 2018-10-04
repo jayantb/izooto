@@ -122,7 +122,7 @@ public class iZooto {
     private static void initFireBaseApp(final String senderId, final String apiKey, final String appId) {
 
         FirebaseOptions firebaseOptions = new FirebaseOptions.Builder().setGcmSenderId(senderId).setApplicationId(appId)
-                        .setApiKey(apiKey).build();
+                .setApiKey(apiKey).build();
         try {
             FirebaseApp firebaseApp = FirebaseApp.getInstance("[DEFAULT]");
             if (firebaseApp == null) {
@@ -135,38 +135,40 @@ public class iZooto {
 
     public static void registerToken() {
         final PreferenceUtil preferenceUtil = PreferenceUtil.getInstance(appContext);
-        String appVersion = Util.getAppVersion();
-        String api_url = "app.php?s=" + 2 + "&pid=" + mIzooToAppId + "&btype=" + 9 + "&dtype=" + 3 + "&tz=" + System.currentTimeMillis() + "&bver=" + appVersion +
-                "&os=" + 4 + "&allowed=" + 1 + "&bKey=" + preferenceUtil.getStringData(AppConstant.FCM_DEVICE_TOKEN) + "&check=1.0";
-        try {
-            String deviceName = URLEncoder.encode(Util.getDeviceName(), "utf-8");
-            String osVersion = URLEncoder.encode(Build.VERSION.RELEASE, "utf-8");
-            api_url += "&osVersion=" + osVersion + "&deviceName=" + deviceName;
-        } catch (UnsupportedEncodingException e) {
-            Lg.e("error: ", "unsupported encoding exception");
-        }
-        RestClient.get(api_url, new RestClient.ResponseHandler() {
-            @Override
-            void onSuccess(String response) {
-                super.onSuccess(response);
-                if (mBuilder != null && mBuilder.mTokenReceivedListener != null) {
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mBuilder.mTokenReceivedListener.onTokenReceived(preferenceUtil.getStringData(AppConstant.FCM_DEVICE_TOKEN));
-                        }
-                    });
+        if (!preferenceUtil.getBoolean(AppConstant.IS_TOKEN_UPDATED)) {
+            String appVersion = Util.getAppVersion();
+            String api_url = "app.php?s=" + 2 + "&pid=" + mIzooToAppId + "&btype=" + 9 + "&dtype=" + 3 + "&tz=" + System.currentTimeMillis() + "&bver=" + appVersion +
+                    "&os=" + 4 + "&allowed=" + 1 + "&bKey=" + preferenceUtil.getStringData(AppConstant.FCM_DEVICE_TOKEN) + "&check=1.0";
+            try {
+                String deviceName = URLEncoder.encode(Util.getDeviceName(), "utf-8");
+                String osVersion = URLEncoder.encode(Build.VERSION.RELEASE, "utf-8");
+                api_url += "&osVersion=" + osVersion + "&deviceName=" + deviceName;
+            } catch (UnsupportedEncodingException e) {
+                Lg.e("error: ", "unsupported encoding exception");
+            }
+            RestClient.get(api_url, new RestClient.ResponseHandler() {
+                @Override
+                void onSuccess(String response) {
+                    super.onSuccess(response);
+                    if (mBuilder != null && mBuilder.mTokenReceivedListener != null) {
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mBuilder.mTokenReceivedListener.onTokenReceived(preferenceUtil.getStringData(AppConstant.FCM_DEVICE_TOKEN));
+                            }
+                        });
 
+                    }
+                    preferenceUtil.setBooleanData(AppConstant.IS_TOKEN_UPDATED, true);
+                    preferenceUtil.setLongData(AppConstant.DEVICE_REGISTRATION_TIMESTAMP, System.currentTimeMillis());
                 }
-                preferenceUtil.setBooleanData(AppConstant.IS_TOKEN_UPDATED, true);
-                preferenceUtil.setLongData(AppConstant.DEVICE_REGISTRATION_TIMESTAMP, System.currentTimeMillis());
-            }
 
-            @Override
-            void onFailure(int statusCode, String response, Throwable throwable) {
-                super.onFailure(statusCode, response, throwable);
-            }
-        });
+                @Override
+                void onFailure(int statusCode, String response, Throwable throwable) {
+                    super.onFailure(statusCode, response, throwable);
+                }
+            });
+        }
     }
 
     public static void processNotificationReceived(Payload payload) {

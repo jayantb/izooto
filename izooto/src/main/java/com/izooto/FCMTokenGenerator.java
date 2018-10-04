@@ -23,6 +23,8 @@ public class FCMTokenGenerator implements TokenGenerator {
                     token = instanceId.getToken(senderId, FirebaseMessaging.INSTANCE_ID_SCOPE);
                     if (token != null && !token.isEmpty()) {
                         PreferenceUtil preferenceUtil = PreferenceUtil.getInstance(context);
+                        if (!token.equals(preferenceUtil.getStringData(AppConstant.FCM_DEVICE_TOKEN)))
+                            preferenceUtil.setBooleanData(AppConstant.IS_TOKEN_UPDATED, false);
                         preferenceUtil.setStringData(AppConstant.FCM_DEVICE_TOKEN, token);
                         if (callback != null)
                             callback.complete(token);
