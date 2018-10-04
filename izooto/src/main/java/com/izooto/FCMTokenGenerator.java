@@ -53,6 +53,4 @@ public class FCMTokenGenerator implements TokenGenerator {
         firebaseApp = FirebaseApp.initializeApp(iZooto.appContext, firebaseOptions, "IZOOTO");
         Lg.d("firebase app name: ", firebaseApp.getName());
     }
-
-
 }

@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,9 +59,9 @@ public class iZooto {
                     Lg.i("IZooTo Encryption key: ", mEncryptionKey);
                     Lg.i("IZooTo App Id: ", mIzooToAppId + "");
                     RestClient.get(AppConstant.GOOGLE_JSON_URL + mIzooToAppId + ".js", new RestClient.ResponseHandler() {
+
                         @Override
                         void onFailure(int statusCode, String response, Throwable throwable) {
-
                             super.onFailure(statusCode, response, throwable);
                         }
 
@@ -74,8 +75,7 @@ public class iZooto {
                                 String appId = jsonObject.getString("appId");
                                 String apiKey = jsonObject.getString("apiKey");
                                 if (senderId != null && !senderId.isEmpty()) {
-//                                    if (!PreferenceUtil.getInstance(context).getBoolean(AppConstant.IS_TOKEN_UPDATED))
-                                        init(context, apiKey, appId);
+                                    init(context, apiKey, appId);
                                 } else {
                                     Lg.e(AppConstant.APP_NAME_TAG, appContext.getString(R.string.something_wrong_fcm_sender_id));
                                 }
@@ -96,9 +96,11 @@ public class iZooto {
     }
 
     private static void init(final Context context, String apiKey, String appId) {
-        FirebaseApp firebaseApp = FirebaseApp.initializeApp(appContext);
+
+        initFireBaseApp(senderId, apiKey, appId);
         FCMTokenGenerator fcmTokenGenerator = new FCMTokenGenerator();
         fcmTokenGenerator.getToken(context, senderId, apiKey, appId, new TokenGenerator.TokenGenerationHandler() {
+
             @Override
             public void complete(String id) {
                 Util util = new Util();
@@ -115,6 +117,20 @@ public class iZooto {
             }
         });
 
+    }
+
+    private static void initFireBaseApp(final String senderId, final String apiKey, final String appId) {
+
+        FirebaseOptions firebaseOptions = new FirebaseOptions.Builder().setGcmSenderId(senderId).setApplicationId(appId)
+                        .setApiKey(apiKey).build();
+        try {
+            FirebaseApp firebaseApp = FirebaseApp.getInstance("[DEFAULT]");
+            if (firebaseApp == null) {
+                FirebaseApp.initializeApp(appContext, firebaseOptions, "[DEFAULT]");
+            }
+        } catch (IllegalStateException ex) {
+            FirebaseApp.initializeApp(appContext, firebaseOptions, "[DEFAULT]");
+        }
     }
 
     public static void registerToken() {

@@ -139,7 +139,7 @@ task wrapper(type: Wrapper) {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:27.1.1'
-    api 'com.google.firebase:firebase-messaging:17.3.2'
+    implementation 'com.google.firebase:firebase-messaging:17.3.3'
     api 'com.android.support:support-v4:27.1.1'
     testImplementation 'org.testng:testng:6.9.6'
 }
