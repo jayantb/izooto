@@ -15,7 +15,7 @@ public class RestClient {
 
     private static final String BASE_URL = "https://aevents.izooto.com/";
     private static final int TIMEOUT = 120000;
-    private static final int GET_TIMEOUT = 60000;
+    public static final int GET_TIMEOUT = 60000;
 
     private static int getThreadTimeout(int timeout) {
         return timeout + 5000;
@@ -30,7 +30,7 @@ public class RestClient {
         }).start();
     }
 
-    private static void makeApiCall(final String url, final String method, final JSONObject jsonBody, final ResponseHandler responseHandler, final int timeout) {
+    public static void makeApiCall(final String url, final String method, final JSONObject jsonBody, final ResponseHandler responseHandler, final int timeout) {
         ExecutorService es = Executors.newSingleThreadExecutor();
         es.submit(new Runnable() {
             @Override
@@ -46,7 +46,7 @@ public class RestClient {
         String json = null;
 
         try {
-            if (url.contains("https:")) {
+            if (url.contains("https:") || url.contains("http:") || url.contains("impr.izooto.com")) {
                 Lg.d(AppConstant.APP_NAME_TAG, "IZooTo RestClient: Making request to: " + url);
                 con = (HttpURLConnection) new URL(url).openConnection();
 

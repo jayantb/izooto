@@ -21,7 +21,7 @@ public class iZooto {
 
     static Context appContext;
     private static String senderId, mEncryptionKey;
-    private static int mIzooToAppId;
+    public static int mIzooToAppId;
     private static Builder mBuilder;
 
     public static void setSenderId(String senderId) {

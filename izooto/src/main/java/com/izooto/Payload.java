@@ -38,6 +38,24 @@ public class Payload {
     private String act1link;
     private String act2name;
     private String act2link;
+    private int inapp;
+    private String trayicon;
+
+    public int getInapp() {
+        return inapp;
+    }
+
+    public void setInapp(int inapp) {
+        this.inapp = inapp;
+    }
+
+    public String getTrayicon() {
+        return trayicon;
+    }
+
+    public void setTrayicon(String trayicon) {
+        this.trayicon = trayicon;
+    }
 
     public String getFetchURL() {
         return fetchURL;

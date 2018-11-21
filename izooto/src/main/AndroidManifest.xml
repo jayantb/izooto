@@ -15,7 +15,9 @@
             android:name="com.izooto.WebViewActivity"
             android:screenOrientation="portrait" />
 
-        <receiver android:name="com.izooto.NotificationActionReceiver">
+        <receiver
+            android:name="com.izooto.NotificationActionReceiver"
+            android:enabled="true">
             <intent-filter>
                 <action android:name="actionBtnOne" />
                 <action android:name="actionBtnTwo" />

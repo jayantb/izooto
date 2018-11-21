@@ -91,6 +91,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 payload.setAct1link(payloadObj.optString("act1link"));
                 payload.setAct2name(payloadObj.optString("act2name"));
                 payload.setAct2link(payloadObj.optString("act2link"));
+                payload.setInapp(payloadObj.optInt("inapp"));
+                payload.setTrayicon(payloadObj.optString("trayicon"));
             } else return;
         } catch (JSONException e) {
             e.printStackTrace();
