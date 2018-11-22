@@ -39,6 +39,14 @@ public class WebViewActivity extends AppCompatActivity {
         initUI();
     }
 
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);//must store the new intent unless getIntent() will return the old one
+        initUI();
+    }
+
+
+
     private void initUI() {
         getBundleData();
         mWebView = findViewById(R.id.webview);

@@ -13,7 +13,9 @@
 
         <activity
             android:name="com.izooto.WebViewActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:exported="true"
+            android:launchMode="singleTask"/>
 
         <receiver
             android:name="com.izooto.NotificationActionReceiver"
